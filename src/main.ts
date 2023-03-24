@@ -63,7 +63,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<IPower
     const settings = getSettings();
     logger.writeDiagnostic(`Loaded settings:\n${JSON.stringify(settings, undefined, 2)}`);
 
-    languageRenameProvider = vscode.languages.registerRenameProvider(documentSelector,new RenameSymbolFeature());
+    const RenameSymbol = new RenameSymbolFeature();
+    languageRenameProvider = vscode.languages.registerRenameProvider(documentSelector,RenameSymbol);
 
     languageConfigurationDisposable = vscode.languages.setLanguageConfiguration(
         PowerShellLanguageId,
@@ -165,6 +166,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<IPower
         new HelpCompletionFeature(),
         new CustomViewsFeature(),
         new PickRunspaceFeature(logger),
+        RenameSymbol,
         externalApi
     ];
 
