@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import vscode = require("vscode");
 import {  RequestType } from "vscode-languageclient";
 import { LanguageClientConsumer } from "../languageClientConsumer";
 import { RenameProvider, WorkspaceEdit, TextDocument, CancellationToken, Position } from "vscode";
@@ -19,14 +20,21 @@ interface IRenameSymbolRequestResponse {
     text: string
 }
 
-
-export const RenameSymbolRequestType = new RequestType<IRenameSymbolRequestArguments, IRenameSymbolRequestResponse, void>("powerShell/RenameSymbol");
+export const RenameSymbolRequestType = new RequestType<IRenameSymbolRequestArguments, IRenameSymbolRequestResponse, void>("powerShell/renameSymbol");
 
 export class RenameSymbolFeature extends LanguageClientConsumer implements RenameProvider {
-    dispose(): void {
-        throw new Error("Method not implemented.");
-    }
+    private command: vscode.Disposable;
 
+    constructor() {
+        super();
+        this.command = vscode.commands.registerCommand("PowerShell.RenameSymbol", () => {
+            throw new Error("Not implemented");
+
+        });
+    }
+    public dispose() {
+        this.command.dispose();
+    }
     public async provideRenameEdits(document: TextDocument, position: Position, newName: string, _token: CancellationToken): Promise<WorkspaceEdit | undefined> {
 
         const req:IRenameSymbolRequestArguments = {
