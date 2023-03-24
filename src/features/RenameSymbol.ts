@@ -6,8 +6,9 @@ import { LanguageClientConsumer } from "../languageClientConsumer";
 import { RenameProvider, WorkspaceEdit, TextDocument, CancellationToken, Position } from "vscode";
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface IRenameSymbolRequestArguments {
-    document:TextDocument
-    position: Position,
+    FileName?:string
+    Line?:number
+    Column?:number
     WantsTextChanges:boolean
     RenameTo:string
     ApplyTextChanges:boolean
@@ -29,8 +30,9 @@ export class RenameSymbolFeature extends LanguageClientConsumer implements Renam
     public async provideRenameEdits(document: TextDocument, position: Position, newName: string, _token: CancellationToken): Promise<WorkspaceEdit | undefined> {
 
         const req:IRenameSymbolRequestArguments = {
-            document : document,
-            position : position,
+            FileName : document.fileName,
+            Line: position.line,
+            Column : position.character,
             WantsTextChanges : true,
             RenameTo : newName,
             ApplyTextChanges : false
