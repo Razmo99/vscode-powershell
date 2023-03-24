@@ -164,6 +164,11 @@
         "when": "editorTextFocus && editorLangId == 'powershell'"
       },
       {
+        "command": "PowerShell.RenameSymbol",
+        "key": "f2",
+        "when": "editorTextFocus && editorLangId == 'powershell'"
+      }
+      {
         "command": "editor.action.insertSnippet",
         "when": "editorTextFocus && editorLangId == 'powershell'",
         "mac": "cmd+alt+j",
