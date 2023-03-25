@@ -4,7 +4,7 @@
 import vscode = require("vscode");
 import {  RequestType } from "vscode-languageclient";
 import { LanguageClientConsumer } from "../languageClientConsumer";
-import { RenameProvider, WorkspaceEdit, TextDocument, CancellationToken, Position } from "vscode";
+import { RenameProvider, WorkspaceEdit, TextDocument, CancellationToken, Position,Uri,Range } from "vscode";
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface IRenameSymbolRequestArguments {
     FileName?:string
@@ -16,8 +16,21 @@ interface IRenameSymbolRequestArguments {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface TextChange {
+
+    newText: string;
+    startLine: number;
+    startColumn: number;
+    endLine: number;
+    endColumn: number;
+}
+interface ModifiedFileResponse{
+    fileName: string;
+    changes : TextChange[]
+}
+
 interface IRenameSymbolRequestResponse {
-    text: string
+    changes : ModifiedFileResponse[]
 }
 
 export const RenameSymbolRequestType = new RequestType<IRenameSymbolRequestArguments, IRenameSymbolRequestResponse, void>("powerShell/renameSymbol");
@@ -47,16 +60,26 @@ export class RenameSymbolFeature extends LanguageClientConsumer implements Renam
         };
 
         try {
-            const result = await this.languageClient?.sendRequest(RenameSymbolRequestType, req);
+            const response = await this.languageClient?.sendRequest(RenameSymbolRequestType, req);
 
-            if (!result) {
+            if (!response) {
                 return undefined;
             }
 
-            //const edit = new WorkspaceEdit();
+            const edit = new WorkspaceEdit();
+            response.changes.forEach(change => {
+                const uri = Uri.file(change.fileName);
 
+                change.changes.forEach(change => {
+                    edit.replace(uri,
+                        new Range(change.startLine, change.startColumn, change.endLine, change.endColumn),
+                        change.newText);
+                });
+            });
+            return edit;
         }catch (error) {
             return undefined;
         }
     }
+
 }
