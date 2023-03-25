@@ -10,9 +10,7 @@ interface IRenameSymbolRequestArguments {
     FileName?:string
     Line?:number
     Column?:number
-    WantsTextChanges:boolean
     RenameTo:string
-    ApplyTextChanges:boolean
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -54,9 +52,7 @@ export class RenameSymbolFeature extends LanguageClientConsumer implements Renam
             FileName : document.fileName,
             Line: position.line,
             Column : position.character,
-            WantsTextChanges : true,
             RenameTo : newName,
-            ApplyTextChanges : false
         };
 
         try {
